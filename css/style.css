@@ -1,0 +1,177 @@
+@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: #020612;
+  /* Efek garis pindaian (scanline) latar belakang */
+  background-image: 
+    linear-gradient(rgba(0, 50, 100, 0.15) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 50, 100, 0.15) 1px, transparent 1px);
+  background-size: 25px 25px;
+  color: #c4f0ff;
+  font-family: 'Share Tech Mono', monospace, sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  overflow: hidden;
+}
+
+.auth-wrap {
+  width: 100%;
+  max-width: 550px;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+/* Bingkai Hologram Utama */
+.holo-border {
+  background: rgba(4, 15, 30, 0.7);
+  border: 1px solid #1a8cff;
+  box-shadow: 0 0 25px rgba(26, 140, 255, 0.4), inset 0 0 20px rgba(26, 140, 255, 0.2);
+  padding: 40px;
+  position: relative;
+  backdrop-filter: blur(5px);
+}
+
+/* Ornamen sudut bingkai */
+.holo-border::before, .holo-border::after {
+  content: '';
+  position: absolute;
+  width: 40px;
+  height: 40px;
+  border: 4px solid #66b3ff;
+  box-shadow: 0 0 10px #1a8cff;
+}
+
+.holo-border::before {
+  top: -4px; left: -4px;
+  border-right: none; border-bottom: none;
+}
+
+.holo-border::after {
+  bottom: -4px; right: -4px;
+  border-left: none; border-top: none;
+}
+
+/* Header NOTIFICATION */
+.system-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(102, 179, 255, 0.5);
+  padding: 12px;
+  margin: 0 auto 30px auto;
+  width: max-content;
+  background: rgba(26, 140, 255, 0.05);
+  box-shadow: inset 0 0 10px rgba(26, 140, 255, 0.3);
+}
+
+.icon-warning {
+  width: 28px;
+  height: 28px;
+  border: 2px solid #c4f0ff;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: bold;
+  font-size: 20px;
+  margin-right: 15px;
+  box-shadow: 0 0 8px #c4f0ff;
+  text-shadow: 0 0 5px #c4f0ff;
+}
+
+.header-text {
+  font-size: 24px;
+  font-weight: bold;
+  letter-spacing: 3px;
+  text-shadow: 0 0 8px #c4f0ff;
+}
+
+.system-message {
+  text-align: center;
+  margin-bottom: 35px;
+  line-height: 1.8;
+  font-size: 16px;
+  text-shadow: 0 0 4px #c4f0ff;
+}
+
+/* Tombol Tab */
+.auth-tabs {
+  display: flex;
+  margin-bottom: 25px;
+  gap: 10px;
+}
+
+.auth-tabs button {
+  flex: 1;
+  background: transparent;
+  border: 1px solid rgba(26, 140, 255, 0.5);
+  color: #66b3ff;
+  padding: 12px;
+  font-family: inherit;
+  font-size: 16px;
+  cursor: pointer;
+  transition: 0.3s;
+  letter-spacing: 2px;
+}
+
+.auth-tabs button.active {
+  background: rgba(26, 140, 255, 0.2);
+  color: #fff;
+  border-color: #66b3ff;
+  box-shadow: inset 0 0 15px rgba(26, 140, 255, 0.6);
+  text-shadow: 0 0 5px #fff;
+}
+
+/* Input Form */
+.field { margin-bottom: 20px; }
+
+.field input {
+  width: 100%;
+  padding: 15px;
+  background: rgba(0, 0, 0, 0.6);
+  border: 1px solid rgba(26, 140, 255, 0.4);
+  color: #c4f0ff;
+  font-family: inherit;
+  font-size: 15px;
+  box-sizing: border-box;
+  text-align: center;
+  transition: 0.3s;
+  letter-spacing: 1px;
+}
+
+.field input::placeholder { color: rgba(102, 179, 255, 0.5); }
+
+.field input:focus {
+  outline: none;
+  border-color: #66b3ff;
+  background: rgba(26, 140, 255, 0.1);
+  box-shadow: 0 0 15px rgba(26, 140, 255, 0.5);
+}
+
+/* Tombol Utama */
+.btn-primary {
+  width: 100%;
+  padding: 18px;
+  background: rgba(26, 140, 255, 0.15);
+  border: 1px solid #c4f0ff;
+  color: #c4f0ff;
+  font-family: inherit;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s;
+  letter-spacing: 4px;
+  text-shadow: 0 0 5px #c4f0ff;
+  margin-top: 10px;
+}
+
+.btn-primary:hover {
+  background: rgba(26, 140, 255, 0.6);
+  color: #fff;
+  border-color: #fff;
+  box-shadow: 0 0 20px rgba(26, 140, 255, 0.8), inset 0 0 10px rgba(255, 255, 255, 0.5);
+}

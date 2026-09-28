@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sistem Litera - Pemberitahuan</title>
+  <link rel="stylesheet" href="css/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+  <div class="auth-wrap">
+    <div class="panel auth-card holo-border">
+      
+      <!-- Bagian Header NOTIFICATION -->
+      <div class="system-header">
+        <div class="icon-warning">!</div>
+        <div class="header-text">NOTIFICATION</div>
+      </div>
+
+      <div class="system-message">
+        Anda telah memperoleh kualifikasi untuk mengakses Sistem Litera.<br>
+        Apakah Anda akan menerima?
+      </div>
+
+      <div class="auth-tabs">
+        <button id="tab-login" class="active" onclick="gantiTab('login')">LOGIN</button>
+        <button id="tab-register" onclick="gantiTab('register')">DAFTAR</button>
+      </div>
+
+      <!-- Form Login -->
+      <form id="form-login" onsubmit="prosesLogin(event)">
+        <div class="field">
+          <input type="email" id="login-email" required placeholder="[ ID Pengguna / Email ]">
+        </div>
+        <div class="field">
+          <input type="password" id="login-password" required placeholder="[ Kata Sandi ]">
+        </div>
+        <button type="submit" class="btn-primary">TERIMA</button>
+      </form>
+
+      <!-- Form Register -->
+      <form id="form-register" onsubmit="prosesRegister(event)" style="display: none;">
+        <div class="field">
+          <input type="text" id="reg-name" required placeholder="[ Nama Pemain ]">
+        </div>
+        <div class="field">
+          <input type="email" id="reg-email" required placeholder="[ ID Pengguna / Email ]">
+        </div>
+        <div class="field">
+          <input type="password" id="reg-password" required minlength="6" placeholder="[ Kata Sandi ]">
+        </div>
+        <button type="submit" class="btn-primary">TERIMA</button>
+      </form>
+
+    </div>
+  </div>
+
+  <script src="js/supabaseClient.js"></script>
+  <script src="js/auth.js"></script>
+</body>
+</html>

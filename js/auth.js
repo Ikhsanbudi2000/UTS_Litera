@@ -1,5 +1,5 @@
 function getSupabaseClient() {
-  const client = window.SUPABASE_CLIENT || window.supabase || supabase || null;
+  const client = window.SUPABASE_CLIENT || null;
   return client && client.auth ? client : null;
 }
 

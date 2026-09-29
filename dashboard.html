@@ -592,8 +592,9 @@
   <script src="js/transactions.js"></script>
   <script>
     document.getElementById('logout-btn')?.addEventListener('click', async () => {
-      if (!supabase || !supabase.auth) return;
-      const { error } = await supabase.auth.signOut();
+      const client = window.SUPABASE_CLIENT;
+      if (!client || !client.auth) return;
+      const { error } = await client.auth.signOut();
       if (error) {
         alert('Gagal logout: ' + error.message);
         return;
@@ -602,8 +603,9 @@
     });
 
     document.addEventListener('DOMContentLoaded', async () => {
-      if (!supabase || !supabase.auth) return;
-      const { data: { session }, error } = await supabase.auth.getSession();
+      const client = window.SUPABASE_CLIENT;
+      if (!client || !client.auth) return;
+      const { data: { session }, error } = await client.auth.getSession();
       if (error || !session) {
         window.location.href = 'index.html';
       }

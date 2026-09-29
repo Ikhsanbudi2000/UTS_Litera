@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
   let historyRows = [];
 
   function getRuntimeClient() {
-    return window.SUPABASE_CLIENT || window.supabase || supabase || null;
+    return window.SUPABASE_CLIENT || null;
   }
 
   function showToast(message, type = 'error') {

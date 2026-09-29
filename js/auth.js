@@ -1,74 +1,104 @@
-// Fungsi untuk memindah tab antara Login dan Register
-function gantiTab(tab) {
-  if (tab === 'login') {
-    document.getElementById('form-login').style.display = 'block';
-    document.getElementById('form-register').style.display = 'none';
-    document.getElementById('tab-login').classList.add('active');
-    document.getElementById('tab-register').classList.remove('active');
-  } else {
-    document.getElementById('form-login').style.display = 'none';
-    document.getElementById('form-register').style.display = 'block';
-    document.getElementById('tab-login').classList.remove('active');
-    document.getElementById('tab-register').classList.add('active');
+function getSupabaseClient() {
+  const client = window.SUPABASE_CLIENT || window.supabase || supabase || null;
+  return client && client.auth ? client : null;
+}
+
+function showAuthError(message) {
+  alert(message);
+}
+
+async function saveProfileIfPossible(userId, fullName) {
+  const client = getSupabaseClient();
+  if (!client || !userId) return;
+
+  const profileCandidates = ['profiles', 'public_profiles'];
+
+  for (const tableName of profileCandidates) {
+    try {
+      const { error } = await client.from(tableName).insert([
+        {
+          id: userId,
+          full_name: fullName,
+          role: 'anggota'
+        }
+      ]);
+
+      if (!error) return;
+      const msg = (error.message || '').toLowerCase();
+      if (msg.includes('does not exist') || msg.includes('column')) continue;
+      console.warn('Profile insert warning:', error.message);
+      return;
+    } catch (err) {
+      console.warn('Profile save skipped:', err.message);
+      return;
+    }
   }
 }
 
-// Logika Proses Login
 async function prosesLogin(event) {
-  event.preventDefault(); // Mencegah halaman reload
-  const email = document.getElementById('login-email').value;
+  event.preventDefault();
+
+  const client = getSupabaseClient();
+  if (!client || !client.auth || typeof client.auth.signInWithPassword !== 'function') {
+    alert('Supabase belum siap. Cek koneksi project Anda.');
+    return;
+  }
+
+  const email = document.getElementById('login-email').value.trim();
   const password = document.getElementById('login-password').value;
 
-  const { data, error } = await supabase.auth.signInWithPassword({
-    email: email,
-    password: password,
-  });
+  const { data, error } = await client.auth.signInWithPassword({ email, password });
 
   if (error) {
     alert('Gagal Masuk: ' + error.message);
-  } else {
-    alert('Berhasil Masuk!');
-    window.location.href = 'dashboard.html'; // Arahkan ke halaman utama setelah login
+    return;
   }
+
+  alert('Berhasil Masuk!');
+  window.location.href = 'dashboard.html';
 }
 
-// Logika Proses Register & Insert Profil
 async function prosesRegister(event) {
   event.preventDefault();
-  const name = document.getElementById('reg-name').value;
-  const email = document.getElementById('reg-email').value;
+
+  const client = getSupabaseClient();
+  if (!client || !client.auth || typeof client.auth.signUp !== 'function') {
+    alert('Supabase belum siap. Cek koneksi project Anda.');
+    return;
+  }
+
+  const name = document.getElementById('reg-name').value.trim();
+  const email = document.getElementById('reg-email').value.trim();
   const password = document.getElementById('reg-password').value;
 
-  // Langkah 1: Daftarkan user ke sistem Autentikasi Supabase
-  const { data: authData, error: authError } = await supabase.auth.signUp({
-    email: email,
-    password: password,
+  const { data: authData, error: authError } = await client.auth.signUp({
+    email,
+    password,
   });
 
   if (authError) {
     alert('Gagal Daftar: ' + authError.message);
-    return; // Hentikan proses jika gagal
+    return;
   }
 
-  // Langkah 2: Jika auth berhasil, rekam nama ke tabel public_profiles
-  if (authData.user) {
-    const { error: profileError } = await supabase
-      .from('public_profiles')
-      .insert([
-        { 
-          id: authData.user.id, // Menyimpan UUID dari user yang baru mendaftar
-          full_name: name,
-          role: 'anggota' 
-        }
-      ]);
-
-    if (profileError) {
-      alert('Akun terbuat, tapi gagal menyimpan profil: ' + profileError.message);
-      // Catatan: Jika error ini muncul, berarti Aurel belum mengatur RLS di tabel profiles
-    } else {
-      alert('Pendaftaran berhasil! Silakan masuk.');
-      document.getElementById('form-register').reset(); // Kosongkan form
-      gantiTab('login'); // Kembalikan tampilan ke tab login
-    }
+  if (authData && authData.user) {
+    await saveProfileIfPossible(authData.user.id, name || 'Anggota Baru');
+    alert('Pendaftaran berhasil! Silakan masuk.');
+    document.getElementById('form-register').reset();
+    gantiTab('login');
   }
 }
+
+async function cekSessionSaatMuat() {
+  const client = getSupabaseClient();
+  if (!client || !client.auth) return;
+
+  const { data: { session }, error } = await client.auth.getSession();
+  if (!error && session) {
+    window.location.href = 'dashboard.html';
+  }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  cekSessionSaatMuat();
+});

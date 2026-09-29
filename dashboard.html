@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Litera | Perpustakaan Digital</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    :root {
+      --bg: #071b2c;
+      --bg-soft: #0d2339;
+      --panel: rgba(8, 23, 37, 0.9);
+      --panel-strong: rgba(11, 34, 53, 0.96);
+      --line: rgba(127, 204, 255, 0.5);
+      --primary: #7ed7ff;
+      --primary-strong: #3bb1ff;
+      --accent: #ffd166;
+      --text: #eaf8ff;
+      --muted: #9bc9dc;
+      --success: #5ee7a9;
+      --danger: #ff7b7b;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: 'Segoe UI', sans-serif;
+      background:
+        radial-gradient(circle at top, rgba(59, 177, 255, 0.18), transparent 32%),
+        linear-gradient(135deg, #04131d 0%, #0a233a 40%, #071b2d 100%);
+      color: var(--text);
+      padding: 28px;
+    }
+
+    .dashboard-shell {
+      max-width: 1280px;
+      margin: 0 auto;
+      background: rgba(4, 15, 30, 0.7);
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3), inset 0 0 30px rgba(126, 215, 255, 0.08);
+      overflow: hidden;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 24px 28px;
+      background: rgba(6, 20, 31, 0.8);
+      border-bottom: 1px solid var(--line);
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .brand-mark {
+      width: 52px;
+      height: 52px;
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 26px;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--primary), #0e4d7a);
+      color: #031a2b;
+      box-shadow: 0 0 20px rgba(126, 215, 255, 0.4);
+    }
+
+    .brand h1 {
+      margin: 0;
+      font-size: clamp(1.6rem, 2vw, 2.4rem);
+      letter-spacing: 1px;
+    }
+
+    .brand small {
+      display: block;
+      color: var(--muted);
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      font-size: 11px;
+      margin-top: 4px;
+    }
+
+    .top-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .pill {
+      background: rgba(126, 215, 255, 0.08);
+      border: 1px solid var(--line);
+      color: var(--text);
+      border-radius: 999px;
+      padding: 10px 16px;
+      font-size: 12px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .logout-btn {
+      background: linear-gradient(135deg, rgba(255, 123, 123, 0.15), rgba(255, 123, 123, 0.05));
+      border: 1px solid rgba(255, 123, 123, 0.58);
+      color: var(--text);
+      padding: 10px 18px;
+      border-radius: 12px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    .content {
+      padding: 26px;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 24px;
+      margin-bottom: 24px;
+    }
+
+    .hero-card,
+    .card {
+      background: linear-gradient(180deg, rgba(13, 35, 57, 0.95), rgba(7, 19, 30, 0.9));
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      box-shadow: inset 0 0 20px rgba(126, 215, 255, 0.06);
+    }
+
+    .hero-card {
+      padding: 28px;
+    }
+
+    .eyebrow {
+      display: inline-block;
+      padding: 8px 12px;
+      font-size: 11px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      border-radius: 999px;
+      background: rgba(126, 215, 255, 0.08);
+      border: 1px solid var(--line);
+      color: var(--primary);
+      margin-bottom: 14px;
+    }
+
+    .hero-card h2 {
+      margin: 0 0 12px;
+      font-size: clamp(2rem, 3vw, 3rem);
+      line-height: 1.1;
+    }
+
+    .hero-card p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.8;
+      max-width: 620px;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 18px;
+      margin-top: 26px;
+    }
+
+    .stat-box {
+      padding: 18px 16px;
+      border-radius: 14px;
+      background: rgba(126, 215, 255, 0.04);
+      border: 1px solid var(--line);
+    }
+
+    .stat-box strong {
+      display: block;
+      font-size: 1.7rem;
+      margin-bottom: 6px;
+      color: var(--primary);
+    }
+
+    .stat-box span {
+      color: var(--muted);
+      font-size: 0.86rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .mini-panel {
+      padding: 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      justify-content: center;
+    }
+
+    .mini-panel .book-cover {
+      height: 180px;
+      border-radius: 18px;
+      background: linear-gradient(135deg, rgba(126, 215, 255, 0.2), rgba(255, 209, 102, 0.17));
+      border: 1px solid var(--line);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .mini-panel .book-cover::before,
+    .mini-panel .book-cover::after {
+      content: "";
+      position: absolute;
+      inset: 18px 18px auto auto;
+      width: 80px;
+      height: 80px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 50%;
+    }
+
+    .mini-panel .book-cover::after {
+      inset: auto auto 18px 18px;
+      width: 96px;
+      height: 96px;
+      background: rgba(126, 215, 255, 0.14);
+    }
+
+    .mini-panel h3 {
+      margin: 0;
+      font-size: 1.35rem;
+    }
+
+    .mini-panel p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    .grid-layout {
+      display: grid;
+      grid-template-columns: 1.3fr 0.7fr;
+      gap: 24px;
+    }
+
+    .card {
+      padding: 22px;
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .card h3 {
+      margin: 0;
+      font-size: 1.2rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .field {
+      margin-bottom: 18px;
+    }
+
+    .field label {
+      display: block;
+      margin-bottom: 8px;
+      color: var(--muted);
+      font-size: 13px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .field input,
+    .field select {
+      width: 100%;
+      padding: 15px 14px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: rgba(4, 18, 28, 0.85);
+      color: var(--text);
+      font-size: 15px;
+      outline: none;
+    }
+
+    .field input:focus,
+    .field select:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 2px rgba(126, 215, 255, 0.15);
+    }
+
+    .primary-btn {
+      width: 100%;
+      border: none;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--primary-strong), #0e5d9f);
+      color: #06131d;
+      font-weight: 800;
+      font-size: 1.1rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 16px 18px;
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      box-shadow: 0 10px 25px rgba(59, 177, 255, 0.3);
+    }
+
+    .primary-btn:hover {
+      transform: translateY(-1px);
+    }
+
+    .toast {
+      display: none;
+      margin-top: 16px;
+      padding: 12px 14px;
+      border-radius: 12px;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .toast.success {
+      display: block;
+      background: rgba(94, 231, 169, 0.08);
+      border: 1px solid rgba(94, 231, 169, 0.5);
+      color: #b8f7d8;
+    }
+
+    .toast.error {
+      display: block;
+      background: rgba(255, 123, 123, 0.08);
+      border: 1px solid rgba(255, 123, 123, 0.5);
+      color: #ffc0c0;
+    }
+
+    .result-box {
+      margin-top: 16px;
+      padding: 16px;
+      border-radius: 12px;
+      background: rgba(126, 215, 255, 0.04);
+      border: 1px solid var(--line);
+      color: var(--text);
+      min-height: 90px;
+      white-space: pre-wrap;
+      line-height: 1.7;
+    }
+
+    .history-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      padding: 0;
+      margin: 0;
+    }
+
+    .history-list li {
+      background: rgba(126, 215, 255, 0.04);
+      border: 1px solid rgba(126, 215, 255, 0.25);
+      border-radius: 12px;
+      padding: 14px 16px;
+      line-height: 1.7;
+      color: var(--muted);
+    }
+
+    .history-item {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      background: linear-gradient(180deg, rgba(12, 30, 46, 0.9), rgba(8, 21, 33, 0.92));
+      border: 1px solid rgba(126, 215, 255, 0.28);
+      border-radius: 14px;
+      padding: 16px;
+      box-shadow: inset 0 0 16px rgba(126, 215, 255, 0.04);
+    }
+
+    .history-meta,
+    .history-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .history-status {
+      display: inline-block;
+      padding: 4px 9px;
+      border-radius: 999px;
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      border: 1px solid transparent;
+    }
+
+    .history-status[data-status="sedang dipinjam"] {
+      background: rgba(126, 215, 255, 0.08);
+      border-color: rgba(126, 215, 255, 0.45);
+      color: #c9f3ff;
+    }
+
+    .history-status[data-status="sudah dikembalikan"] {
+      background: rgba(94, 231, 169, 0.08);
+      border-color: rgba(94, 231, 169, 0.45);
+      color: #b9f7d7;
+    }
+
+    .history-status[data-status="terkena denda"] {
+      background: rgba(255, 123, 123, 0.08);
+      border-color: rgba(255, 123, 123, 0.45);
+      color: #ffc0c0;
+    }
+
+    .history-book {
+      color: var(--text);
+      font-weight: 600;
+      line-height: 1.6;
+    }
+
+    .detail-btn {
+      border: 1px solid rgba(126, 215, 255, 0.45);
+      background: rgba(126, 215, 255, 0.06);
+      color: var(--text);
+      border-radius: 10px;
+      padding: 8px 12px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    .history-empty {
+      color: var(--muted);
+      text-align: center;
+      padding: 20px 12px;
+      border: 1px dashed rgba(126, 215, 255, 0.35);
+      border-radius: 12px;
+      background: rgba(126, 215, 255, 0.02);
+    }
+
+    .history-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: flex-end;
+      margin-top: 4px;
+    }
+
+    .action-btn {
+      border: 1px solid rgba(126, 215, 255, 0.35);
+      background: rgba(126, 215, 255, 0.05);
+      color: var(--text);
+      border-radius: 10px;
+      padding: 8px 10px;
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 600;
+      transition: transform 0.2s ease;
+    }
+
+    .action-btn.success {
+      border-color: rgba(94, 231, 169, 0.45);
+      background: rgba(94, 231, 169, 0.08);
+      color: #bbf7dc;
+    }
+
+    .action-btn.danger {
+      border-color: rgba(255, 123, 123, 0.45);
+      background: rgba(255, 123, 123, 0.08);
+      color: #ffc7c7;
+    }
+
+    .action-btn:hover {
+      transform: translateY(-1px);
+    }
+
+    .history-list strong { color: var(--text); }
+
+    @media (max-width: 980px) {
+      .hero,
+      .grid-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="dashboard-shell">
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-mark">L</div>
+        <div>
+          <h1>Litera</h1>
+          <small>Perpustakaan Digital</small>
+        </div>
+      </div>
+
+      <div class="top-actions">
+        <div class="pill">AKTIF</div>
+        <button class="logout-btn" id="logout-btn">Logout</button>
+      </div>
+    </header>
+
+    <main class="content">
+      <section class="hero">
+        <div class="hero-card">
+          <div class="eyebrow">Koleksi hari ini</div>
+          <h2>Selamat datang di ruang baca digital.</h2>
+          <p>
+            Jelajahi buku, kelola peminjaman, dan nikmati pengalaman membaca modern
+            dengan sistem perpustakaan digital yang cepat, aman, dan ramah pengguna.
+          </p>
+
+          <div class="stats">
+            <div class="stat-box">
+              <strong>12K+</strong>
+              <span>Koleksi</span>
+            </div>
+            <div class="stat-box">
+              <strong>840</strong>
+              <span>Anggota</span>
+            </div>
+            <div class="stat-box">
+              <strong>96%</strong>
+              <span>Aktif</span>
+            </div>
+          </div>
+        </div>
+
+        <aside class="hero-card mini-panel">
+          <div class="book-cover"></div>
+          <div>
+            <h3>Recommended Book</h3>
+            <p>Digital Library Essentials</p>
+          </div>
+        </aside>
+      </section>
+
+      <section class="grid-layout">
+        <div class="card">
+          <div class="card-header">
+            <h3>Form Transaksi</h3>
+            <span class="pill">Library System</span>
+          </div>
+
+          <form id="transaction-form">
+            <div class="field">
+              <label for="item-id">Judul Buku</label>
+              <select id="item-id" required>
+                <option value="">-- Pilih Buku --</option>
+                <option value="1">Buku Sains Dasar</option>
+                <option value="2">Buku Fiksi Populer</option>
+                <option value="3">Buku Teknologi</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <label for="qty">Jumlah</label>
+              <input id="qty" type="number" min="1" value="1" required />
+            </div>
+
+            <div class="field">
+              <label for="customer">Nama Peminjam</label>
+              <input id="customer" type="text" placeholder="Masukkan nama peminjam" required />
+            </div>
+
+            <button type="submit" class="primary-btn">Proses Transaksi</button>
+          </form>
+
+          <div id="toast" class="toast" aria-live="polite"></div>
+          <div id="result-box" class="result-box">Menunggu transaksi...</div>
+        </div>
+
+        <aside class="card">
+          <div class="card-header">
+            <h3>Riwayat</h3>
+            <span class="pill">Terbaru</span>
+          </div>
+          <ul id="history-list" class="history-list"></ul>
+        </aside>
+      </section>
+    </main>
+  </div>
+
+  <script src="js/supabaseClient.js"></script>
+  <script src="js/transactions.js"></script>
+  <script>
+    document.getElementById('logout-btn')?.addEventListener('click', async () => {
+      if (!supabase || !supabase.auth) return;
+      const { error } = await supabase.auth.signOut();
+      if (error) {
+        alert('Gagal logout: ' + error.message);
+        return;
+      }
+      window.location.href = 'index.html';
+    });
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      if (!supabase || !supabase.auth) return;
+      const { data: { session }, error } = await supabase.auth.getSession();
+      if (error || !session) {
+        window.location.href = 'index.html';
+      }
+    });
+  </script>
+</body>
+</html>

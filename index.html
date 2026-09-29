@@ -5,7 +5,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Sistem Litera - Pemberitahuan</title>
   <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/form.css">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    const supabaseUrl = 'https://zghmtkeiffkhpyhcxtad.supabase.co';
+    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpnaG10a2VpZmZraHB5aGN4dGFkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA1NjQ1MTcsImV4cCI6MjEwNjE0MDUxN30.LP18R5iU5qRo-l6muVJCgwYUMHXATB9Mhj8XptqmRdI';
+
+    if (window.supabase && typeof window.supabase.createClient === 'function') {
+      window.SUPABASE_CLIENT = window.supabase.createClient(supabaseUrl, supabaseKey);
+      window.supabase = window.SUPABASE_CLIENT;
+    }
+  </script>
 </head>
 <body>
   <div class="auth-wrap">
@@ -23,12 +33,12 @@
       </div>
 
       <div class="auth-tabs">
-        <button id="tab-login" class="active" onclick="gantiTab('login')">LOGIN</button>
-        <button id="tab-register" onclick="gantiTab('register')">DAFTAR</button>
+        <button id="tab-login" class="active" type="button">LOGIN</button>
+        <button id="tab-register" type="button">DAFTAR</button>
       </div>
 
       <!-- Form Login -->
-      <form id="form-login" onsubmit="prosesLogin(event)">
+      <form id="form-login">
         <div class="field">
           <input type="email" id="login-email" required placeholder="[ ID Pengguna / Email ]">
         </div>
@@ -39,9 +49,9 @@
       </form>
 
       <!-- Form Register -->
-      <form id="form-register" onsubmit="prosesRegister(event)" style="display: none;">
+      <form id="form-register" class="is-hidden">
         <div class="field">
-          <input type="text" id="reg-name" required placeholder="[ Nama Pemain ]">
+          <input type="text" id="reg-name" required placeholder="[ Nama Pengguna ]">
         </div>
         <div class="field">
           <input type="email" id="reg-email" required placeholder="[ ID Pengguna / Email ]">
@@ -57,5 +67,6 @@
 
   <script src="js/supabaseClient.js"></script>
   <script src="js/auth.js"></script>
+  <script src="js/form.js"></script>
 </body>
 </html>

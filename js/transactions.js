@@ -185,36 +185,9 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   async function saveTransactionToSupabase(client, payload) {
-    try {
-      const { data, error } = await client.rpc('proses_transaksi', payload);
-      if (!error) {
-        return { source: 'rpc', data };
-      }
-
-      if (error.message && error.message.toLowerCase().includes('not found the function')) {
-        throw error;
-      }
-
-      throw error;
-    } catch (rpcError) {
-      const insertPayload = {
-        customer_name: payload.p_customer_name ?? payload.customer_name,
-        item_id: Number(payload.p_item_id ?? payload.item_id),
-        qty: Number(payload.p_qty ?? payload.qty),
-        status: 'sedang dipinjam'
-      };
-
-      const { data, error } = await client
-        .from('transactions')
-        .insert([insertPayload])
-        .select();
-
-      if (error) {
-        throw error;
-      }
-
-      return { source: 'insert', data };
-    }
+    const { data, error } = await client.rpc('proses_transaksi', payload);
+    if (error) throw error;
+    return { source: 'rpc', data };
   }
 
   async function updateTransactionStatus(id, nextStatus) {

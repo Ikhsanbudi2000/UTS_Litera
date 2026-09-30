@@ -518,125 +518,90 @@
       }
     }
   </style>
+  <link rel="stylesheet" href="css/dashboard.css">
 </head>
 <body>
-  <div class="dashboard-shell">
-    <header class="topbar">
-      <div class="brand">
-        <div class="brand-mark">L</div>
-        <div>
-          <h1>Litera</h1>
-          <small>Perpustakaan Digital</small>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <a class="brand-lockup" href="dashboard.html" aria-label="Litera beranda">
+        <span class="brand-mark">L</span>
+        <span><span class="brand-name">Litera</span><span class="brand-subtitle">Library operations</span></span>
+      </a>
+      <div class="nav-label">Workspace</div>
+      <nav class="primary-nav" aria-label="Navigasi dashboard">
+        <button class="nav-link" type="button" data-view="overview" data-title="Ringkasan" aria-current="page"><span class="nav-index">01</span>Ringkasan</button>
+        <button class="nav-link" type="button" data-view="books" data-title="Koleksi buku" aria-current="false"><span class="nav-index">02</span>Koleksi buku</button>
+        <button class="nav-link" type="button" data-view="transactions" data-title="Peminjaman" aria-current="false"><span class="nav-index">03</span>Peminjaman</button>
+        <button class="nav-link" type="button" data-view="members" data-title="Anggota & akses" aria-current="false" data-admin-only hidden><span class="nav-index">04</span>Anggota & akses</button>
+      </nav>
+      <div class="sidebar-spacer"></div>
+      <div class="sidebar-foot"><p>Data tersinkron langsung dengan Supabase.</p></div>
+    </aside>
+
+    <div class="main-column">
+      <header class="topbar">
+        <div class="topbar-title"><p>Litera / Workspace</p><h1 id="page-title">Ringkasan</h1></div>
+        <div class="topbar-actions">
+          <span class="sync-state" id="realtime-status" data-state="connecting"><span class="sync-dot"></span><span>Memuat koneksi</span></span>
+          <div class="identity"><span class="avatar" id="avatar">L</span><span class="identity-copy"><span class="identity-name" id="identity-name">Memuat...</span><span class="role-tag" id="identity-role">—</span></span></div>
+          <a class="text-button" id="login-link" href="index.html" hidden>Masuk</a>
+          <button class="text-button" id="logout-button" type="button" hidden>Keluar</button>
         </div>
-      </div>
+      </header>
 
-      <div class="top-actions">
-        <div class="pill">AKTIF</div>
-        <button class="logout-btn" id="logout-btn">Logout</button>
-      </div>
-    </header>
+      <main class="workspace">
+        <div class="role-banner" id="admin-role-banner" hidden>Mode anggota: katalog dapat dilihat dan peminjaman dapat diajukan. Perubahan koleksi dan status transaksi hanya untuk admin.</div>
+        <div class="role-banner" id="guest-banner" hidden>Mode pengunjung: katalog bersifat read-only. Masuk atau daftar untuk mengajukan peminjaman.</div>
 
-    <main class="content">
-      <section class="hero">
-        <div class="hero-card">
-          <div class="eyebrow">Koleksi hari ini</div>
-          <h2>Selamat datang di ruang baca digital.</h2>
-          <p>
-            Jelajahi buku, kelola peminjaman, dan nikmati pengalaman membaca modern
-            dengan sistem perpustakaan digital yang cepat, aman, dan ramah pengguna.
-          </p>
-
-          <div class="stats">
-            <div class="stat-box">
-              <strong>12K+</strong>
-              <span>Koleksi</span>
-            </div>
-            <div class="stat-box">
-              <strong>840</strong>
-              <span>Anggota</span>
-            </div>
-            <div class="stat-box">
-              <strong>96%</strong>
-              <span>Aktif</span>
-            </div>
+        <section class="view-panel" id="panel-overview" data-panel="overview">
+          <div class="page-heading"><div><p class="page-kicker">Library operations / Today</p><h2>Ringkasan perpustakaan</h2><p>Pantau koleksi, stok, aktivitas peminjaman, dan akses anggota.</p></div><button class="solid-button" type="button" data-view="transactions" data-title="Peminjaman">Buat peminjaman</button></div>
+          <div class="metric-grid" aria-label="Metrik perpustakaan">
+            <article class="metric"><span class="metric-label">Judul buku</span><strong class="metric-value" id="metric-books">—</strong><span class="metric-note">Judul dalam katalog</span></article>
+            <article class="metric"><span class="metric-label">Total stok</span><strong class="metric-value" id="metric-stock">—</strong><span class="metric-note">Eksemplar tersedia</span></article>
+            <article class="metric"><span class="metric-label" id="metric-transactions-label">Total transaksi</span><strong class="metric-value" id="metric-transactions">—</strong><span class="metric-note">Riwayat tercatat</span></article>
+            <article class="metric"><span class="metric-label" id="metric-active-label">Peminjaman aktif</span><strong class="metric-value" id="metric-active">—</strong><span class="metric-note">Belum dikembalikan</span></article>
+            <article class="metric"><span class="metric-label">Profil anggota</span><strong class="metric-value" id="metric-profiles">—</strong><span class="metric-note" id="metric-profiles-note">Memuat profil</span></article>
           </div>
-        </div>
-
-        <aside class="hero-card mini-panel">
-          <div class="book-cover"></div>
-          <div>
-            <h3>Recommended Book</h3>
-            <p>Digital Library Essentials</p>
+          <div class="content-grid">
+            <section class="panel"><header class="panel-header"><div><h3>Koleksi terbaru</h3><p>Ringkasan stok buku yang tersedia</p></div><button class="quiet-button" type="button" data-view="books" data-title="Koleksi buku">Lihat semua</button></header><div class="panel-body flush table-wrap"><table><thead><tr><th scope="col">Judul</th><th scope="col">Stok</th></tr></thead><tbody id="overview-book-rows"><tr><td colspan="2" class="empty-state">Memuat katalog…</td></tr></tbody></table></div></section>
+            <section class="panel"><header class="panel-header"><div><h3>Aktivitas peminjaman</h3><p>Transaksi terbaru</p></div><button class="quiet-button" type="button" data-view="transactions" data-title="Peminjaman">Riwayat</button></header><div class="panel-body flush table-wrap"><table><thead><tr><th scope="col">Peminjam</th><th scope="col">Buku</th><th scope="col">Status</th></tr></thead><tbody id="recent-transaction-rows"><tr><td colspan="3" class="empty-state">Memuat aktivitas…</td></tr></tbody></table></div></section>
           </div>
-        </aside>
-      </section>
+        </section>
 
-      <section class="grid-layout">
-        <div class="card">
-          <div class="card-header">
-            <h3>Form Transaksi</h3>
-            <span class="pill">Library System</span>
-          </div>
-
-          <form id="transaction-form">
-            <div class="field">
-              <label for="item-id">Judul Buku</label>
-              <select id="item-id" required>
-                <option value="">-- Pilih Buku --</option>
-              </select>
-              <small id="book-stock-status" aria-live="polite">Memuat data buku...</small>
-            </div>
-
-            <div class="field">
-              <label for="qty">Jumlah</label>
-              <input id="qty" type="number" min="1" value="1" required />
-            </div>
-
-            <div class="field">
-              <label for="customer">Nama Peminjam</label>
-              <input id="customer" type="text" placeholder="Masukkan nama peminjam" required />
-            </div>
-
-            <button type="submit" class="primary-btn">Proses Transaksi</button>
+        <section class="view-panel" id="panel-books" data-panel="books" hidden>
+          <div class="page-heading"><div><p class="page-kicker">Inventory / Catalog</p><h2>Koleksi buku</h2><p>Kelola judul dan stok; katalog tetap dapat dilihat anggota.</p></div><span class="inline-summary" id="book-count">— judul</span></div>
+          <form class="admin-form" id="book-form" data-admin-only hidden>
+            <div class="form-field"><label for="new-book-title">Judul buku</label><input id="new-book-title" name="judul" type="text" maxlength="180" placeholder="Contoh: Laut Bercerita" required></div>
+            <div class="form-field"><label for="new-book-stock">Stok awal</label><input id="new-book-stock" name="stok" type="number" min="0" max="100000" value="1" required></div>
+            <button class="solid-button" type="submit">Tambah buku</button>
           </form>
+          <section class="panel"><header class="panel-header"><div><h3>Daftar katalog</h3><p>Perubahan tersinkron otomatis</p></div><span class="role-tag" id="book-access-label">Read-only</span></header><div class="panel-body"><div class="toolbar"><label class="search-box"><span class="role-tag">Cari buku</span><input class="search-input" id="book-search" type="search" placeholder="Cari judul…" autocomplete="off"></label></div><div class="table-wrap"><table><thead><tr><th scope="col">Judul</th><th scope="col">Stok</th><th scope="col">Ditambahkan</th><th scope="col">Aksi</th></tr></thead><tbody id="book-rows"><tr><td colspan="4" class="empty-state">Memuat katalog…</td></tr></tbody></table></div></div></section>
+        </section>
 
-          <div id="toast" class="toast" aria-live="polite"></div>
-          <div id="result-box" class="result-box">Menunggu transaksi...</div>
-        </div>
-
-        <aside class="card">
-          <div class="card-header">
-            <h3>Riwayat</h3>
-            <span class="pill">Terbaru</span>
+        <section class="view-panel" id="panel-transactions" data-panel="transactions" hidden>
+          <div class="page-heading"><div><p class="page-kicker">Circulation / Loans</p><h2>Peminjaman & transaksi</h2><p>Anggota mengajukan peminjaman; admin mengelola status dan catatan transaksi.</p></div></div>
+          <div class="borrow-layout">
+            <form class="borrow-form" id="borrow-form">
+              <div class="form-field"><label for="borrow-book">Judul buku</label><select id="borrow-book" required><option value="">Memuat katalog…</option></select><p class="stock-hint" id="borrow-stock" aria-live="polite">Pilih judul untuk melihat stok.</p></div>
+              <div class="form-field"><label for="borrow-qty">Jumlah</label><input id="borrow-qty" type="number" min="1" value="1" required></div>
+              <button class="solid-button" id="borrow-submit" type="submit">Ajukan peminjaman</button>
+              <p class="stock-hint" id="borrow-customer" style="grid-column:1/-1;margin:0"></p>
+            </form>
+            <aside class="borrow-note"><strong>Validasi stok</strong>Peminjaman diproses atomik di database. Stok yang tidak mencukupi akan ditolak tanpa membuat transaksi.</aside>
           </div>
-          <ul id="history-list" class="history-list"></ul>
-        </aside>
-      </section>
-    </main>
+          <section class="panel" style="margin-top:17px"><header class="panel-header"><div><h3>Riwayat transaksi</h3><p id="transaction-scope">Riwayat yang dapat Anda akses</p></div><div class="filter-bar" id="transaction-filters" aria-label="Filter status transaksi"><button class="filter-button" type="button" data-filter="all" aria-pressed="true">Semua</button><button class="filter-button" type="button" data-filter="active" aria-pressed="false">Dipinjam</button><button class="filter-button" type="button" data-filter="returned" aria-pressed="false">Dikembalikan</button><button class="filter-button" type="button" data-filter="fined" aria-pressed="false">Denda</button></div></header><div class="panel-body flush table-wrap"><table><thead><tr><th scope="col">Waktu</th><th scope="col">Peminjam</th><th scope="col">Buku</th><th scope="col">Qty</th><th scope="col">Status</th><th scope="col">Aksi</th></tr></thead><tbody id="transaction-rows"><tr><td colspan="6" class="empty-state">Memuat transaksi…</td></tr></tbody></table></div></section>
+        </section>
+
+        <section class="view-panel" id="panel-members" data-panel="members" hidden>
+          <div class="page-heading"><div><p class="page-kicker">People / Access</p><h2>Anggota & akses</h2><p>Kelola role aplikasi. Hak admin juga dibatasi oleh kebijakan RLS Supabase.</p></div></div>
+          <section class="panel"><header class="panel-header"><div><h3>Profil pengguna</h3><p>Pengguna baru otomatis dibuat sebagai anggota</p></div><span class="inline-summary" id="member-count">— profil</span></header><div class="panel-body flush table-wrap"><table><thead><tr><th scope="col">Nama / ID</th><th scope="col">Role</th><th scope="col">Diperbarui</th><th scope="col">Aksi</th></tr></thead><tbody id="profile-rows"><tr><td colspan="4" class="empty-state">Memuat profil…</td></tr></tbody></table></div></section>
+          <aside class="borrow-note">Admin pertama dibuat melalui SQL Editor, bukan dari browser. Gunakan bootstrap SQL di <code>supabase-schema.sql</code>; jangan menyimpan service-role key di frontend.</aside>
+        </section>
+      </main>
+    </div>
   </div>
-
+  <div class="toast-region" id="toast-region" aria-live="polite" aria-atomic="false"></div>
   <script src="js/supabaseClient.js"></script>
-  <script src="js/transactions.js"></script>
-  <script>
-    document.getElementById('logout-btn')?.addEventListener('click', async () => {
-      const client = window.SUPABASE_CLIENT;
-      if (!client || !client.auth) return;
-      const { error } = await client.auth.signOut();
-      if (error) {
-        alert('Gagal logout: ' + error.message);
-        return;
-      }
-      window.location.href = 'index.html';
-    });
-
-    document.addEventListener('DOMContentLoaded', async () => {
-      const client = window.SUPABASE_CLIENT;
-      if (!client || !client.auth) return;
-      const { data: { session }, error } = await client.auth.getSession();
-      if (error || !session) {
-        window.location.href = 'index.html';
-      }
-    });
-  </script>
+  <script src="js/dashboard.js"></script>
 </body>
 </html>

@@ -84,3 +84,20 @@
 }
 
 .is-hidden { display: none; }
+
+.auth-feedback {
+  margin: 0 0 18px;
+  padding: 11px 13px;
+  border: 1px solid #e8b6ad;
+  border-radius: 8px;
+  background: #fff5f2;
+  color: #842f2f;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.auth-feedback[data-type="success"] {
+  border-color: #b7dfc1;
+  background: #f1faf3;
+  color: #1b6140;
+}

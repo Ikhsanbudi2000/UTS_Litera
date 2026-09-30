@@ -16,26 +16,26 @@
       window.supabase = window.SUPABASE_CLIENT;
     }
   </script>
-</head>
-<body>
-  <div class="auth-wrap">
-    <div class="panel auth-card holo-border">
-      
-      <!-- Bagian Header NOTIFICATION -->
-      <div class="system-header">
-        <div class="icon-warning">!</div>
-        <div class="header-text">NOTIFICATION</div>
+  <script src="js/supabaseClient.js"></script>
+  </head>
+  <body>
+    <div class="auth-wrap">
+      <div class="panel auth-card holo-border">
+        <div class="system-header">
+          <div class="icon-warning">!</div>
+          <div class="header-text">NOTIFICATION</div>
       </div>
 
       <div class="system-message">
-        Anda telah memperoleh kualifikasi untuk mengakses Sistem Litera.<br>
-        Apakah Anda akan menerima?
+        Daftar atau Masuk untuk meminjam buku.
       </div>
 
       <div class="auth-tabs">
         <button id="tab-login" class="active" type="button">LOGIN</button>
         <button id="tab-register" type="button">DAFTAR</button>
       </div>
+
+      <p id="auth-feedback" class="auth-feedback" role="status" aria-live="polite" hidden></p>
 
       <!-- Form Login -->
       <form id="form-login">

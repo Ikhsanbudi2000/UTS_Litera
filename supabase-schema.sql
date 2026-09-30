@@ -75,3 +75,23 @@ grant usage on schema public to anon, authenticated;
 grant select, insert, update on public.buku to anon, authenticated;
 grant select, insert, update on public.transactions to anon, authenticated;
 grant execute on function public.proses_transaksi(text, bigint, int) to anon, authenticated;
+
+do $$
+begin
+  if exists (select 1 from pg_publication where pubname = 'supabase_realtime') then
+    if not exists (
+      select 1 from pg_publication_tables
+      where pubname = 'supabase_realtime' and schemaname = 'public' and tablename = 'buku'
+    ) then
+      execute 'alter publication supabase_realtime add table public.buku';
+    end if;
+
+    if not exists (
+      select 1 from pg_publication_tables
+      where pubname = 'supabase_realtime' and schemaname = 'public' and tablename = 'transactions'
+    ) then
+      execute 'alter publication supabase_realtime add table public.transactions';
+    end if;
+  end if;
+end;
+$$;

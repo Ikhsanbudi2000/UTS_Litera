@@ -3,7 +3,10 @@ document.addEventListener('DOMContentLoaded', () => {
   const toast = document.getElementById('toast');
   const resultBox = document.getElementById('result-box');
   const historyList = document.getElementById('history-list');
+  const bookSelect = document.getElementById('item-id');
+  const bookStockStatus = document.getElementById('book-stock-status');
   let historyRows = [];
+  let books = [];
 
   function getRuntimeClient() {
     return window.SUPABASE_CLIENT || null;
@@ -79,6 +82,56 @@ document.addEventListener('DOMContentLoaded', () => {
         `;
       })
       .join('');
+  }
+
+  async function loadBooks() {
+    const client = ensureSupabaseReady();
+    if (!client || !bookSelect) return;
+
+    const { data, error } = await client
+      .from('buku')
+      .select('id, judul, stok')
+      .order('judul', { ascending: true });
+
+    if (error) {
+      console.error('Gagal memuat buku:', error);
+      if (bookStockStatus) bookStockStatus.textContent = 'Gagal memuat data buku.';
+      return;
+    }
+
+    books = Array.isArray(data) ? data : [];
+    const selectedBookId = bookSelect.value;
+    const placeholder = document.createElement('option');
+    placeholder.value = '';
+    placeholder.textContent = books.length ? '-- Pilih Buku --' : 'Belum ada buku';
+    bookSelect.replaceChildren(placeholder);
+
+    books.forEach((book) => {
+      const option = document.createElement('option');
+      option.value = String(book.id);
+      option.textContent = `${book.judul} (Stok: ${book.stok})`;
+      option.disabled = Number(book.stok) < 1;
+      bookSelect.append(option);
+    });
+
+    if (books.some((book) => String(book.id) === selectedBookId && Number(book.stok) > 0)) {
+      bookSelect.value = selectedBookId;
+    }
+    updateSelectedBookStock();
+  }
+
+  function updateSelectedBookStock() {
+    const selectedBook = books.find((book) => String(book.id) === bookSelect?.value);
+    if (bookStockStatus) {
+      bookStockStatus.textContent = selectedBook
+        ? `Stok tersedia: ${selectedBook.stok}`
+        : 'Pilih buku untuk melihat stok.';
+    }
+    if (selectedBook) {
+      document.getElementById('qty').max = String(selectedBook.stok);
+    } else {
+      document.getElementById('qty').removeAttribute('max');
+    }
   }
 
   async function loadHistory() {
@@ -231,6 +284,8 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  bookSelect?.addEventListener('change', updateSelectedBookStock);
+
   if (form) {
     form.addEventListener('submit', async (event) => {
       event.preventDefault();
@@ -281,5 +336,23 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 }
 
+  const client = getRuntimeClient();
+  if (client && typeof client.channel === 'function') {
+    client
+      .channel('litera-realtime-updates')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'buku' }, () => {
+        loadBooks();
+      })
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'transactions' }, () => {
+        loadHistory();
+      })
+      .subscribe((status) => {
+        if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT') {
+          console.error('Realtime Supabase tidak tersambung:', status);
+        }
+      });
+  }
+
+  loadBooks();
   loadHistory();
 });

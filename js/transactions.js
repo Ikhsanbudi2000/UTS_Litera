@@ -95,7 +95,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (error) {
       console.error('Gagal memuat buku:', error);
-      if (bookStockStatus) bookStockStatus.textContent = 'Gagal memuat data buku.';
+      const option = document.createElement('option');
+      option.value = '';
+      option.textContent = 'Gagal memuat buku';
+      bookSelect.replaceChildren(option);
+      if (bookStockStatus) {
+        bookStockStatus.textContent = `Gagal memuat data buku: ${error.message}`;
+      }
       return;
     }
 
@@ -103,7 +109,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const selectedBookId = bookSelect.value;
     const placeholder = document.createElement('option');
     placeholder.value = '';
-    placeholder.textContent = books.length ? '-- Pilih Buku --' : 'Belum ada buku';
+    placeholder.textContent = books.length ? '-- Pilih Buku --' : 'Belum ada data buku';
     bookSelect.replaceChildren(placeholder);
 
     books.forEach((book) => {
@@ -125,7 +131,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (bookStockStatus) {
       bookStockStatus.textContent = selectedBook
         ? `Stok tersedia: ${selectedBook.stok}`
-        : 'Pilih buku untuk melihat stok.';
+        : books.length ? 'Pilih buku untuk melihat stok.' : 'Tambahkan buku pada tabel public.buku di Supabase.';
     }
     if (selectedBook) {
       document.getElementById('qty').max = String(selectedBook.stok);

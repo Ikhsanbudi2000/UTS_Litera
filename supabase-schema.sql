@@ -20,11 +20,17 @@ create table if not exists public.transactions (
 );
 
 insert into public.buku (judul, stok)
-values
+select seed.judul, seed.stok
+from (values
   ('Buku Sains Dasar', 10),
   ('Buku Fiksi Populer', 8),
   ('Buku Teknologi', 12)
-on conflict do nothing;
+) as seed(judul, stok)
+where not exists (
+  select 1
+  from public.buku as existing
+  where existing.judul = seed.judul
+);
 
 create or replace function public.proses_transaksi(
   p_customer_name text,
@@ -75,6 +81,41 @@ grant usage on schema public to anon, authenticated;
 grant select, insert, update on public.buku to anon, authenticated;
 grant select, insert, update on public.transactions to anon, authenticated;
 grant execute on function public.proses_transaksi(text, bigint, int) to anon, authenticated;
+
+alter table public.buku enable row level security;
+alter table public.transactions enable row level security;
+
+drop policy if exists buku_read_catalog on public.buku;
+create policy buku_read_catalog on public.buku
+  for select to anon, authenticated
+  using (true);
+
+drop policy if exists buku_write_authenticated on public.buku;
+create policy buku_write_authenticated on public.buku
+  for insert to authenticated
+  with check (true);
+
+drop policy if exists buku_update_authenticated on public.buku;
+create policy buku_update_authenticated on public.buku
+  for update to authenticated
+  using (true)
+  with check (true);
+
+drop policy if exists transactions_read_authenticated on public.transactions;
+create policy transactions_read_authenticated on public.transactions
+  for select to authenticated
+  using (true);
+
+drop policy if exists transactions_insert_authenticated on public.transactions;
+create policy transactions_insert_authenticated on public.transactions
+  for insert to authenticated
+  with check (true);
+
+drop policy if exists transactions_update_authenticated on public.transactions;
+create policy transactions_update_authenticated on public.transactions
+  for update to authenticated
+  using (true)
+  with check (true);
 
 do $$
 begin

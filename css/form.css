@@ -8,25 +8,27 @@
 .btn-primary {
   font-family: inherit;
   cursor: pointer;
-  transition: background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+  transition: all 0.2s ease;
 }
 
 .auth-tabs button {
   flex: 1;
   padding: 12px;
-  border: 1px solid rgba(26, 140, 255, 0.5);
-  background: transparent;
-  color: #66b3ff;
-  font-size: 16px;
-  letter-spacing: 2px;
+  border: 1px solid #b7e4c7;
+  border-radius: 10px;
+  background: #f4fbf7;
+  color: #2d6a4f;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 1px;
 }
 
 .auth-tabs button.active {
-  border-color: #66b3ff;
-  background: rgba(26, 140, 255, 0.2);
-  color: #fff;
-  box-shadow: inset 0 0 15px rgba(26, 140, 255, 0.6);
-  text-shadow: 0 0 5px #fff;
+  border-color: #2d6a4f;
+  background: #2d6a4f;
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(45, 106, 79, 0.25);
+  text-shadow: none;
 }
 
 .field { margin-bottom: 20px; }
@@ -35,47 +37,49 @@
   width: 100%;
   padding: 15px;
   box-sizing: border-box;
-  border: 1px solid rgba(26, 140, 255, 0.4);
-  background: rgba(0, 0, 0, 0.6);
-  color: #c4f0ff;
+  border: 1px solid #b7e4c7;
+  border-radius: 10px;
+  background: #ffffff;
+  color: #1b3a2b;
   font-family: inherit;
   font-size: 15px;
   text-align: left;
   transition: border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
 }
 
-.field input::placeholder { color: rgba(102, 179, 255, 0.65); }
+.field input::placeholder { color: #74a892; }
 
 .field input:focus {
   outline: none;
-  border-color: #66b3ff;
-  background: rgba(26, 140, 255, 0.1);
-  box-shadow: 0 0 0 3px rgba(26, 140, 255, 0.18);
+  border-color: #2d6a4f;
+  background: #ffffff;
+  box-shadow: 0 0 0 3px rgba(45, 106, 79, 0.15);
 }
 
 .btn-primary {
   width: 100%;
   margin-top: 10px;
   padding: 16px 18px;
-  border: 1px solid #c4f0ff;
-  background: rgba(26, 140, 255, 0.15);
-  color: #c4f0ff;
-  font-size: 17px;
-  font-weight: bold;
-  letter-spacing: 3px;
-  text-shadow: 0 0 5px #c4f0ff;
+  border: 1px solid #2d6a4f;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #2d6a4f 0%, #1b4332 100%);
+  color: #ffffff;
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  box-shadow: 0 6px 16px rgba(45, 106, 79, 0.25);
 }
 
 .btn-primary:hover {
-  border-color: #fff;
-  background: rgba(26, 140, 255, 0.55);
-  color: #fff;
-  box-shadow: 0 0 20px rgba(26, 140, 255, 0.55);
+  border-color: #1b4332;
+  background: linear-gradient(135deg, #40916c 0%, #2d6a4f 100%);
+  color: #ffffff;
+  box-shadow: 0 8px 20px rgba(45, 106, 79, 0.35);
 }
 
 .auth-tabs button:focus-visible,
 .btn-primary:focus-visible {
-  outline: 2px solid #fff;
+  outline: 2px solid #2d6a4f;
   outline-offset: 3px;
 }
 

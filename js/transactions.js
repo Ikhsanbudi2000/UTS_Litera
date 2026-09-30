@@ -260,20 +260,26 @@ document.addEventListener('DOMContentLoaded', () => {
           ? JSON.stringify(resultValue[0], null, 2)
           : JSON.stringify(resultValue, null, 2);
 
-        resultBox.textContent = `Transaksi berhasil diproses via ${saveResult.source === 'rpc' ? 'stored procedure' : 'insert tabel transaksi'}:\n${detail}`;
-        showToast('Transaksi berhasil diproses.', 'success');
-        form.reset();
-        document.getElementById('qty').value = 1;
-        await loadHistory();
-      } catch (err) {
-        console.error(err);
-        showToast('Gagal menyimpan transaksi.', 'error');
-        if (resultBox) {
-          resultBox.textContent = `Error: ${err.message}\n\nPeriksa tabel transactions dan fungsi public.proses_transaksi di Supabase.`;
-        }
+      // Kosongkan/sembunyikan kotak hasil log
+      if (resultBox) {
+        resultBox.textContent = '';
+        resultBox.style.display = 'none'; // Tambahkan ini jika ingin menyembunyikan kotaknya sepenuhnya
       }
-    });
-  }
+      
+      showToast('Transaksi berhasil diproses.', 'success');
+      form.reset();
+      document.getElementById('qty').value = 1;
+      await loadHistory();
+    } catch (err) {
+      console.error(err);
+      showToast('Gagal menyimpan transaksi.', 'error');
+      if (resultBox) {
+        resultBox.style.display = 'block';
+        resultBox.textContent = `Error: ${err.message}\n\nPeriksa tabel transactions dan fungsi public.proses_transaksi di Supabase.`;
+      }
+    }
+  });
+}
 
   loadHistory();
 });
